@@ -2,6 +2,8 @@ import os
 import time
 import discord
 from discord.ext import commands, tasks
+import requests
+from bs4 import BeautifulSoup
 
 TOKEN = os.getenv("DISCORD_TOKEN")
 CHANNEL_ID = int(os.getenv("CHANNEL_ID"))
@@ -31,9 +33,6 @@ async def check_status():
         channel = await bot.fetch_channel(CHANNEL_ID)
 
         # Wiimmfi のページを取得
-        import requests
-        from bs4 import BeautifulSoup
-
         url = "https://wiimmfi.de/stats/mkw"
         html = requests.get(url).text
         soup = BeautifulSoup(html, "html.parser")
@@ -52,3 +51,10 @@ async def check_status():
             await channel.send("ふんさん発生！！")
 
             # 通知時間を更新
+            last_notify_time = now
+
+    except Exception as e:
+        print("エラー:", e)
+
+bot.run(TOKEN)
+
